@@ -10,7 +10,7 @@ const Wrapper = styled(CommonWrapper)`
   background-color: blue;
 `;
 
-const Chart = () => {
+const Chart = ({ ticker }) => {
   return (
     <Container>
       <Wrapper>Chart</Wrapper>

@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { SubscribeType, Symbols, TickerTypes } from "../types/type";
 
 import Chart from "../components/Chart";
 import Transaction from "../components/Transaction";
@@ -16,10 +18,43 @@ const FlexRow = styled.div`
 `;
 
 const Home = () => {
+  let ws = useRef(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [ticker, setTicker] = useState();
+
+  const createWebSocket = async () => {
+    try {
+      ws.current = new WebSocket("wss://pubwss.bithumb.com/pub/ws");
+      ws.current.onopen = (e) => {
+        setIsConnected((isConnected) => !isConnected);
+        console.log("onopen ==== ", e);
+      };
+    } catch (err) {
+      setIsConnected(false);
+      console.error("ERROR!! ===", err.message);
+    }
+  };
+
+  useEffect(() => {
+    createWebSocket();
+  }, []);
+
+  useEffect(() => {
+    if (isConnected) {
+      ws.current.send(
+        JSON.stringify({
+          type: SubscribeType.ticker,
+          symbols: [Symbols.BTC_KRW, Symbols.ETH_KRW],
+          tickTypes: [TickerTypes["24H"]],
+        })
+      );
+    }
+  }, [isConnected]);
+
   return (
     <Container>
-      <SymbolList />
-      <Chart />
+      <SymbolList ticker={ticker} />
+      <Chart ticker={ticker} />
       <FlexRow>
         <Transaction />
         <OrderBook />
