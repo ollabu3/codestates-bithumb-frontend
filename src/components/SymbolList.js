@@ -5,8 +5,6 @@ import { moneyComma, MoneyUnit } from "../libs/utils";
 
 const Container = styled(CommonContainer)`
   height: 150px;
-  border: 1px solid red;
-  /* border: 1px solid rgb(224 242 254); */
 `;
 
 const Table = styled.table`
@@ -21,17 +19,11 @@ const TbodyTr = styled.tr`
 `;
 
 const TbodyTd = styled(Mum)``;
-const SymbolList = ({ ticker }) => {
+
+const SymbolList = ({ ticker, setId }) => {
   const renderList = (value) => {
-    /* 
-자산: symbol
-시세 : closePrice 
-변동률 :  chgAmt (chgRate)
-거래금액 : value 
-*/
     return Object.values(value).map((item) => (
-      <TbodyTr key={item.symbol}>
-        {console.log(typeof item.chgAmt)}
+      <TbodyTr key={item.symbol} onClick={() => setId(item.symbo)}>
         <td>{item.symbol}</td>
         <TbodyTd>{moneyComma(item.closePrice)}</TbodyTd>
         <TbodyTd>

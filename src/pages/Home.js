@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { SubscribeType, Symbols, TickerTypes, OrderType } from "../types/type";
 
@@ -21,10 +20,7 @@ const FlexRow = styled.div`
 
 const Home = () => {
   let ws = useRef(null);
-  const navigate = useNavigate();
-  const params = useParams();
-  const id = params.id ? params.id.slice(1) : Symbols.BTC_KRW;
-
+  const [id, setId] = useState(Symbols.BTC_KRW);
   const [isConnected, setIsConnected] = useState(false);
   const [ticker, setTicker] = useState();
   const [transaction, setTransaction] = useState([]);
@@ -43,9 +39,11 @@ const Home = () => {
   };
 
   const getTickerData = (data) => {
+    const symbol = data.symbol;
+
     setTicker((prev) => ({
       ...prev,
-      [data.symbol]: data,
+      [symbol]: data,
     }));
   };
 
@@ -66,7 +64,7 @@ const Home = () => {
       prev[symbol]
         ? {
             ...prev,
-            [symbol]: [...dataList, ...prev[symbol]].slice(0, 30),
+            [symbol]: [...dataList, ...prev[symbol]].slice(0, 20),
           }
         : { ...prev, [symbol]: [...dataList] }
     );
@@ -113,7 +111,6 @@ const Home = () => {
   useEffect(() => {
     createWebSocket();
   }, []);
-
   useEffect(() => {
     if (isConnected) {
       ws.current.send(
@@ -159,8 +156,8 @@ const Home = () => {
 
   return (
     <Container>
-      <SymbolList ticker={ticker} navigate={navigate} />
-      <Chart ticker={ticker} />
+      <SymbolList ticker={ticker} setId={setId} />
+      <Chart id={id} />
       <FlexRow>
         <Transaction transaction={transaction} id={id} />
         <Info id={id} ticker={ticker} />

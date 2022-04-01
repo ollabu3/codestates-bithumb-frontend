@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components";
 import { CommonContainer, CommonWrapper } from "../styles/common";
 
@@ -47,7 +47,6 @@ const TradeContent = styled.td`
 
 const Info = ({ ticker, id }) => {
   const TitleItem = (data) => {
-    console.log("Data ===", data);
     return (
       <TitleWrapper>
         <Title>{data.closePrice}</Title>
@@ -85,7 +84,6 @@ const Info = ({ ticker, id }) => {
     );
   };
 
-  console.log("ticker ===", ticker);
   return (
     <Container>
       <Wrapper>

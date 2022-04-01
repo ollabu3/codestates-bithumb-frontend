@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import { CommonContainer, CommonWrapper } from "../styles/common";
 import { moneyComma } from "../libs/utils";
@@ -27,8 +28,8 @@ const Transaction = ({ transaction, id }) => {
 				"updn" : "dn"								// 직전 시세와 비교 : up-상승, dn-하락
 			}
     */
-    return data.map((item) => (
-      <TbodyTr key={item.symbol}>
+    return data.map((item, index) => (
+      <TbodyTr key={index}>
         <td>{item.contDtm}</td>
         <td>{moneyComma(item.contPrice)}</td>
         <td style={{ color: item.updn === "up" ? "red" : "blue" }}>
