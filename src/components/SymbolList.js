@@ -1,25 +1,47 @@
 import React from "react";
 import styled from "styled-components";
-import { CommonContainer } from "../styles/common";
+import { CommonContainer, Mum } from "../styles/common";
+import { moneyComma, MoneyUnit } from "../libs/utils";
 
-export const Container = styled(CommonContainer)`
+const Container = styled(CommonContainer)`
   height: 150px;
   border: 1px solid red;
   /* border: 1px solid rgb(224 242 254); */
 `;
 
-export const Table = styled.table`
+const Table = styled.table`
   width: 100%;
 `;
 
-export const TbodyTr = styled.tr`
+const TbodyTr = styled.tr`
   cursor: pointer;
   &:hover {
     background-color: rgb(224 242 254);
   }
 `;
 
-const SymbolList = () => {
+const TbodyTd = styled(Mum)``;
+const SymbolList = ({ ticker }) => {
+  const renderList = (value) => {
+    /* 
+자산: symbol
+시세 : closePrice 
+변동률 :  chgAmt (chgRate)
+거래금액 : value 
+*/
+    return Object.values(value).map((item) => (
+      <TbodyTr key={item.symbol}>
+        {console.log(typeof item.chgAmt)}
+        <td>{item.symbol}</td>
+        <TbodyTd>{moneyComma(item.closePrice)}</TbodyTd>
+        <TbodyTd>
+          {moneyComma(item.chgAmt)} ({item.chgRate})
+        </TbodyTd>
+        <TbodyTd>{MoneyUnit(item.value)}</TbodyTd>
+      </TbodyTr>
+    ));
+  };
+
   return (
     <Container>
       <Table>
@@ -27,24 +49,11 @@ const SymbolList = () => {
           <tr>
             <th>자산</th>
             <th>시세(KRW)</th>
-            <th>변동률</th>
-            <th>거래금액</th>
+            <th>변동률(전일대비)</th>
+            <th>거래금액(24H)</th>
           </tr>
         </thead>
-        <tbody>
-          <TbodyTr>
-            <td>비트코인</td>
-            <td>55,612,000</td>
-            <td>-1,018,000 (-10%)</td>
-            <td>232323232332원</td>
-          </TbodyTr>
-          <TbodyTr>
-            <td>비트코인</td>
-            <td>55,612,000</td>
-            <td>-1,018,000 (-10%)</td>
-            <td>232323232332원</td>
-          </TbodyTr>
-        </tbody>
+        {ticker && <tbody>{renderList(ticker)}</tbody>}
       </Table>
     </Container>
   );

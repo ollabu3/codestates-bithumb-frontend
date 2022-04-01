@@ -48,8 +48,19 @@ const Home = () => {
           tickTypes: [TickerTypes["24H"]],
         })
       );
+      ws.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === "ticker") {
+          setTicker((prev) => ({
+            ...prev,
+            [data.content.symbol]: data.content,
+          }));
+        }
+      };
     }
   }, [isConnected]);
+
+  console.log("ticker ===", ticker);
 
   return (
     <Container>
