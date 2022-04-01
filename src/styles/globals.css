@@ -92,3 +92,17 @@ ol,
 ul {
   list-style: none;
 }
+
+thead,
+tbody,
+tfoot,
+tr,
+th,
+td,
+img {
+  vertical-align: middle;
+}
+
+td {
+  text-align: center;
+}

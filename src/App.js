@@ -1,8 +1,14 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+
 const App = () => {
   return (
-    <h1 className="text-3xl text-blue-500 font-bold">
-      codestates-bithumb-frontend
-    </h1>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        {/* <Route path="/detail/:id" element={<Detail />} /> */}
+      </Routes>
+    </BrowserRouter>
   );
 };
 
