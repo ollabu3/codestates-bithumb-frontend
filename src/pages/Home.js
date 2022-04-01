@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { SubscribeType, Symbols, TickerTypes, OrderType } from "../types/type";
 
@@ -11,6 +11,7 @@ import OrderBook from "../components/OrderBook";
 const Container = styled.div`
   width: 1300px;
   margin: auto;
+  padding-top: 10px;
 `;
 
 const FlexRow = styled.div`
@@ -18,18 +19,17 @@ const FlexRow = styled.div`
   height: 500px;
 `;
 
-const Home = () => {
+const Home = ({ match }) => {
   let ws = useRef(null);
   const navigate = useNavigate();
   const params = useParams();
-  const id = params.id ? params.id : Symbols.BTC_KRW;
+  const id = params.id ? params.id.slice(1) : Symbols.BTC_KRW;
 
   const [isConnected, setIsConnected] = useState(false);
   const [ticker, setTicker] = useState();
   const [transaction, setTransaction] = useState([]);
   const [orderBook, setOrderBook] = useState([]);
 
-  // {"symbol" : "BTC_KRW", "orderType" : "ask", "price" : "10596000", "quantity" : "0.5495", "total" : "8"},
   const createWebSocket = async () => {
     try {
       ws.current = new WebSocket("wss://pubwss.bithumb.com/pub/ws");
@@ -62,15 +62,6 @@ const Home = () => {
     );
   };
 
-  /*
-List: [	{
-				"symbol" : "BTC_KRW",
-				"orderType" : "ask",		// 주문타입 – bid / ask
-				"price" : "10593000",		// 호가
-				"quantity" : "1.11223318",	// 잔량
-				"total" : "3"				// 건수
-			}]
-*/
   const getOrderBookData = (data) => {
     const symbol = data.list[0].symbol;
     const dataList = data.list.sort(
@@ -84,7 +75,6 @@ List: [	{
     const bidDataList = dataList.filter(
       (item) => item.orderType === OrderType.bid
     );
-
     setOrderBook((prev) =>
       prev[symbol]
         ? {
@@ -102,29 +92,14 @@ List: [	{
             },
           }
     );
-    // 리스트 가지고 와서
-    /*
-    bid와 ask를 나눈 후
-    orderBook : {
-      BTC_KRW: {
-        ask : {}
-        bid : {}
-      }.
-       ETM_KRW: {
-        ask : {}
-        bid : {}
-      }.
-    }
-    */
   };
 
-  console.log(orderBook);
   useEffect(() => {
     createWebSocket();
   }, []);
 
   useEffect(() => {
-    if (ws.current && isConnected) {
+    if (isConnected) {
       ws.current.send(
         JSON.stringify({
           type: SubscribeType.ticker,
@@ -148,7 +123,6 @@ List: [	{
 
       ws.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-
         switch (data.type) {
           case SubscribeType.ticker:
             getTickerData(data.content);
