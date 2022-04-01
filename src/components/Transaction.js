@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-
 import styled from "styled-components";
 import { CommonContainer, CommonWrapper } from "../styles/common";
-import { SubscribeType, Symbols } from "../types/type";
-
+import { moneyComma } from "../libs/utils";
 const Container = styled(CommonContainer)`
   flex: 1;
 `;
@@ -15,12 +12,10 @@ const Table = styled.table`
   width: 100%;
 `;
 
-const TbodyTr = styled.tr`
+const Tbody = styled.tbody`
   overflow: scroll;
-  &:hover {
-    background-color: rgb(224 242 254);
-  }
 `;
+const TbodyTr = styled.tr``;
 
 const Transaction = ({ transaction, id }) => {
   const renderList = (data) => {
@@ -34,9 +29,11 @@ const Transaction = ({ transaction, id }) => {
     */
     return data.map((item) => (
       <TbodyTr key={item.symbol}>
-        <td>{item.contDtm.split(" ")[1]}</td>
-        <td>{item.contPrice}</td>
-        <td>{item.contQty}</td>
+        <td>{item.contDtm}</td>
+        <td>{moneyComma(item.contPrice)}</td>
+        <td style={{ color: item.updn === "up" ? "red" : "blue" }}>
+          {item.contQy} BTC
+        </td>
       </TbodyTr>
     ));
   };
@@ -49,12 +46,12 @@ const Transaction = ({ transaction, id }) => {
           <thead>
             <tr>
               <th>시간</th>
-              <th>가격</th>
+              <th>가격(KRW)</th>
               <th>수량</th>
             </tr>
           </thead>
           {transaction && Object.keys(transaction).includes(id) && (
-            <tbody>{renderList(Object.values(transaction[id]))}</tbody>
+            <Tbody>{renderList(Object.values(transaction[id]))}</Tbody>
           )}
         </Table>
       </Wrapper>
