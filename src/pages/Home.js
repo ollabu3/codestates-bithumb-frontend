@@ -6,7 +6,7 @@ import { SubscribeType, Symbols, TickerTypes, OrderType } from "../types/type";
 import Chart from "../components/Chart";
 import Transaction from "../components/Transaction";
 import SymbolList from "../components/SymbolList";
-import OrderBook from "../components/OrderBook";
+import Info from "../components/Info";
 
 const Container = styled.div`
   width: 1300px;
@@ -19,7 +19,7 @@ const FlexRow = styled.div`
   height: 500px;
 `;
 
-const Home = ({ match }) => {
+const Home = () => {
   let ws = useRef(null);
   const navigate = useNavigate();
   const params = useParams();
@@ -51,12 +51,22 @@ const Home = ({ match }) => {
 
   const getTransactionData = (data) => {
     const symbol = data.list[0].symbol;
-    const dataList = data.list.reverse();
+    const dataList = data.list.reverse().map((item) => {
+      const contDtm = item.contDtm.split(" ")[1];
+
+      return {
+        contDtm: contDtm.slice(0, 11),
+        contPrice: item.contPrice,
+        contQy: item.contQty.slice(0, 6),
+        updn: item.updn,
+      };
+    });
+
     setTransaction((prev) =>
       prev[symbol]
         ? {
             ...prev,
-            [symbol]: [...dataList, ...prev[symbol]],
+            [symbol]: [...dataList, ...prev[symbol]].slice(0, 30),
           }
         : { ...prev, [symbol]: [...dataList] }
     );
@@ -67,14 +77,20 @@ const Home = ({ match }) => {
     const dataList = data.list.sort(
       (a, b) => Number(b.price) - Number(a.price)
     );
-
-    const askDataList = dataList.filter(
-      (item) => item.orderType === OrderType.ask
-    );
-
-    const bidDataList = dataList.filter(
-      (item) => item.orderType === OrderType.bid
-    );
+    const dataFilterList = (type) =>
+      dataList.filter((item) => item.orderType === type);
+    const askDataList = dataFilterList(OrderType.ask);
+    const bidDataList = dataFilterList(OrderType.bid);
+    /*
+	{
+    가격의 수량이 0이되면 빼줘야 한다.
+				"symbol" : "BTC_KRW",
+				"orderType" : "ask",		// 주문타입 – bid / ask
+				"price" : "10593000",		// 호가
+				"quantity" : "1.11223318",	// 잔량
+				"total" : "3"				// 건수
+			},
+*/
     setOrderBook((prev) =>
       prev[symbol]
         ? {
@@ -147,7 +163,7 @@ const Home = ({ match }) => {
       <Chart ticker={ticker} />
       <FlexRow>
         <Transaction transaction={transaction} id={id} />
-        <OrderBook orderBook={orderBook} id={id} />
+        <Info id={id} ticker={ticker} />
       </FlexRow>
     </Container>
   );
