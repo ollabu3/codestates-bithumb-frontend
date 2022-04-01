@@ -103,6 +103,9 @@ img {
   vertical-align: middle;
 }
 
+th {
+  color: #a4a4a4;
+}
 td {
   text-align: center;
 }

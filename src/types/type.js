@@ -6,9 +6,6 @@ export const SubscribeType = {
 
 export const Symbols = {
   BTC_KRW: "BTC_KRW",
-  ETH_KRW: "ETH_KRW",
-  XRP_KRW: "XRP_KRW",
-  XLM_KRW: "XLM_KRW",
 };
 
 export const TickerTypes = {
